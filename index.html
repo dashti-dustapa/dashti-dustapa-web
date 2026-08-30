@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>خانووبەرەی دەشتی دوستەپە</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Vazirmatn', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- هێڵی سەرەوە -->
+  <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center font-black text-slate-950 text-lg shadow">د.د</div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-black text-amber-400 leading-none">خانووبەرەی دەشتی دوستەپە</h1>
+          <p class="text-[11px] text-slate-400 mt-0.5">Dashti Dustapa Real Estate</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="tel:07512193920" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-2 rounded-xl text-xs font-bold border border-slate-700 transition">
+          📞 0751 219 3920
+        </a>
+        <button onclick="toggleAdmin()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition">
+          داشبۆردی خاوەن موڵک
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- بەشی سەرەکی ماڵپەڕ -->
+  <main id="publicView">
+    <section class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-12 px-4 border-b border-slate-700 text-center">
+      <div class="max-w-4xl mx-auto">
+        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3.5 py-1.5 rounded-full text-xs font-bold inline-block mb-3">
+          موڵکی نموونەیی لە دەشتی دوستەپە و دەوروبەری
+        </span>
+        <h2 class="text-3xl sm:text-4xl font-black mb-3">خانوو، زەوی و ڤێلای خەونەکانت بدۆزەرەوە</h2>
+        <p class="text-slate-400 text-sm mb-8">کڕین، فرۆشتن، و بەکرێدانی هەموو جۆرە موڵکێک بە گرەنتی</p>
+
+        <!-- فلتەر و گەڕان -->
+        <div class="bg-white p-3 rounded-2xl shadow-2xl text-slate-900 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto">
+          <input type="text" id="searchInput" oninput="renderProperties()" placeholder="گەڕان بەپێی شوێن یان ناو..." class="p-3 bg-slate-50 rounded-xl text-xs border focus:outline-none">
+          <select id="typeFilter" onchange="renderProperties()" class="p-3 bg-slate-50 rounded-xl text-xs border focus:outline-none">
+            <option value="all">هەموو جۆرەکان</option>
+            <option value="خانوو">خانوو</option>
+            <option value="شوقە">شوقە</option>
+            <option value="ڤێلا">ڤێلا</option>
+            <option value="زەوی">زەوی</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- کاردەکان -->
+    <section class="max-w-7xl mx-auto px-4 py-10">
+      <div id="propertyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+  </main>
+
+  <!-- بەشی داشبۆرد -->
+  <main id="adminView" class="hidden max-w-4xl mx-auto px-4 py-8">
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm mb-8">
+      <h3 class="text-base font-black text-slate-900 mb-4">➕ زیادکردنی موڵکی نوێ</h3>
+      <form onsubmit="addProperty(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <input type="text" id="pTitle" placeholder="ناونیشانی موڵک" class="p-3 border rounded-xl text-xs bg-slate-50 md:col-span-2" required>
+        <input type="number" id="pPrice" placeholder="نرخ بە دۆلار ($)" class="p-3 border rounded-xl text-xs bg-slate-50" required>
+        <input type="text" id="pLocation" placeholder="شوێن / گەڕەک" class="p-3 border rounded-xl text-xs bg-slate-50" required>
+        <select id="pType" class="p-3 border rounded-xl text-xs bg-slate-50">
+          <option value="خانوو">خانوو</option>
+          <option value="شوقە">شوقە</option>
+          <option value="ڤێلا">ڤێلا</option>
+          <option value="زەوی">زەوی</option>
+        </select>
+        <input type="number" id="pArea" placeholder="ڕووبەر (م²)" class="p-3 border rounded-xl text-xs bg-slate-50" required>
+        <input type="url" id="pImage" placeholder="لینکی وێنەی موڵک" class="p-3 border rounded-xl text-xs bg-slate-50 md:col-span-2" required>
+        <textarea id="pDesc" placeholder="تێبینی دەربارەی موڵکەکە..." class="p-3 border rounded-xl text-xs bg-slate-50 md:col-span-2 h-20" required></textarea>
+        <button type="submit" class="md:col-span-2 bg-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs">بڵاوکردنەوەی موڵک</button>
+      </form>
+    </div>
+
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <h3 class="font-black text-sm mb-4">بەڕێوەبردنی موڵکەکان</h3>
+      <div id="adminPropertyList" class="space-y-3"></div>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://vvvldvbgywfynlroudio.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2dmxkdmJneXdmeW5scm91ZGlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwNDExNDMsImV4cCI6MjEwMzYxNzE0M30.QuThGUEutLdCoPyq-O8AsocMqkQS8C0W31RN2nnfEPY';
+    const PHONE = "07512193920";
+    const WA_PHONE = "9647512193920";
+    let properties = [];
+
+    async function loadProperties() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/properties?select=*&order=created_at.desc`, {
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+        });
+        properties = await res.json();
+        renderProperties();
+        renderAdminList();
+      } catch (e) { console.error(e); }
+    }
+
+    function renderProperties() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const type = document.getElementById('typeFilter').value;
+      const grid = document.getElementById('propertyGrid');
+
+      const filtered = properties.filter(p => {
+        const matchSearch = p.title.toLowerCase().includes(search) || p.location.toLowerCase().includes(search);
+        const matchType = type === 'all' || p.property_type === type;
+        return matchSearch && matchType;
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="col-span-full text-center py-12 bg-white rounded-2xl border text-slate-500 font-bold">هیچ موڵکێک بەردەست نییە</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
+          <div class="relative h-56 bg-slate-100">
+            <img src="${p.image_url}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800'">
+            <span class="absolute top-3 right-3 px-3 py-1 text-xs font-bold rounded-lg text-white ${p.status === 'available' ? 'bg-emerald-600' : 'bg-rose-600'}">
+              ${p.status === 'available' ? 'بەردەستە' : 'فرۆشراوە'}
+            </span>
+            <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md text-amber-400 px-3 py-1 rounded-xl font-black text-sm">
+              $${Number(p.price).toLocaleString()}
+            </div>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border inline-block mb-2">${p.property_type}</span>
+              <h4 class="text-base font-black text-slate-900 mb-1">${p.title}</h4>
+              <p class="text-slate-500 text-xs mb-4">${p.description}</p>
+              <div class="grid grid-cols-2 gap-2 text-center text-xs text-slate-600 bg-slate-50 p-2 rounded-xl mb-4 border">
+                <div><span class="text-[10px] text-slate-400 block">شوێن</span><b>${p.location}</b></div>
+                <div><span class="text-[10px] text-slate-400 block">ڕووبەر</span><b>${p.area_sqm} م²</b></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t">
+              <a href="tel:${PHONE}" class="py-2.5 bg-slate-100 text-slate-800 text-xs font-bold rounded-xl text-center">📞 پەیوەندی</a>
+              <a href="https://wa.me/${WA_PHONE}?text=${encodeURIComponent('سڵاو، دەمەوێت زانیاری بزانم دەربارەی: ' + p.title)}" target="_blank" class="py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl text-center">واتسئەپ 💬</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderAdminList() {
+      const list = document.getElementById('adminPropertyList');
+      list.innerHTML = properties.map(p => `
+        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border">
+          <div class="flex items-center gap-3">
+            <img src="${p.image_url}" class="w-10 h-10 rounded-lg object-cover">
+            <div>
+              <p class="font-bold text-xs">${p.title}</p>
+              <p class="text-[11px] text-slate-500">$${Number(p.price).toLocaleString()} • ${p.location}</p>
+            </div>
+          </div>
+          <button onclick="deleteProp('${p.id}')" class="px-3 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg">سڕینەوە</button>
+        </div>
+      `).join('');
+    }
+
+    async function addProperty(e) {
+      e.preventDefault();
+      await fetch(`${SUPABASE_URL}/rest/v1/properties`, {
+        method: 'POST',
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: document.getElementById('pTitle').value,
+          price: Number(document.getElementById('pPrice').value),
+          location: document.getElementById('pLocation').value,
+          property_type: document.getElementById('pType').value,
+          area_sqm: Number(document.getElementById('pArea').value),
+          image_url: document.getElementById('pImage').value,
+          description: document.getElementById('pDesc').value,
+          status: 'available'
+        })
+      });
+      alert('موڵکەکە بە سەرکەوتوویی زیادکرا!');
+      e.target.reset();
+      loadProperties();
+    }
+
+    async function deleteProp(id) {
+      if (confirm('دڵنیایت لە سڕینەوە؟')) {
+        await fetch(`${SUPABASE_URL}/rest/v1/properties?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+        });
+        loadProperties();
+      }
+    }
+
+    function toggleAdmin() {
+      document.getElementById('publicView').classList.toggle('hidden');
+      document.getElementById('adminView').classList.toggle('hidden');
+    }
+
+    loadProperties();
+  </script>
+</body>
+</html>
